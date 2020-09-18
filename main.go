@@ -80,7 +80,7 @@ func main() {
 
 	go func() {
 		for {
-			u, _ := url.Parse("http://192.168.6.51:8022/tag-health")
+			u, _ := url.Parse("http://www.baidu.com")
 			//q := u.Query()
 			//u.RawQuery = q.Encode()
 			res, err := http.Get(u.String())
