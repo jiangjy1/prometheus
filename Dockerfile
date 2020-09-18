@@ -5,6 +5,8 @@ FROM golang:1.15.2-alpine
 # 拷贝当前目录的应用到镜像
 COPY main.go /application/
 COPY urls /application/
+COPY go.mod /application/
+COPY go.sum /application/
 
 # 声明工作目录,不然找不到依赖包，如果有的话
 WORKDIR /application
