@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"log"
 	"math/rand"
+	"os"
+	"path/filepath"
 	"strconv"
 
 	//"math"
@@ -46,12 +49,38 @@ func init() {
 	prometheus.MustRegister(prometheus.NewBuildInfoCollector())
 }
 
+func testurl() (filepaths string) {
+	filepaths, _ = filepath.Abs("./readfile/urls")
+	fmt.Println(filepaths)
+	return filepaths
+}
+
+func readfile() {
+	var urls []string
+	r, err := os.Open(testurl())
+	if err != nil {
+		fmt.Printf("Error: %s\n", err)
+		return
+	}
+	defer r.Close()
+	var s = bufio.NewScanner(r)
+	for s.Scan() { // 循环直到文件结束
+		line := s.Text() // 这个 line 就是每一行的文本了，string 类型
+		fmt.Println(line)
+		urls = append(urls, line)
+	}
+	fmt.Println(urls)
+	for k, v := range urls {
+		fmt.Printf("url[%d]:%s\r\n", k, v)
+	}
+}
+
 func main() {
 	flag.Parse()
 
 	go func() {
 		for {
-			u, _ := url.Parse("http://192.168.3.131:80")
+			u, _ := url.Parse("http://192.168.6.66:8022/tag-health")
 			//q := u.Query()
 			//u.RawQuery = q.Encode()
 			res, err := http.Get(u.String())
@@ -68,6 +97,7 @@ func main() {
 			}
 			if resCode == 200 {
 				fmt.Printf("%s success , http_status is %d \r\n", u.String(), resCode)
+				fmt.Printf("%s is success", u.String())
 			} else {
 				fmt.Printf("%s failed , http_status is %d \r\n", u.String(), resCode)
 			}
