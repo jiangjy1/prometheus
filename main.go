@@ -50,7 +50,7 @@ func init() {
 }
 
 func testurl() (filepaths string) {
-	filepaths, _ = filepath.Abs("./readfile/urls")
+	filepaths, _ = filepath.Abs("./urls")
 	fmt.Println(filepaths)
 	return filepaths
 }
