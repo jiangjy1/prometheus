@@ -52,7 +52,7 @@ func init() {
 	// 设置存储位置
 	//log.SetOutput(logFile)
 	var logSaveDays = 3
-	var logFile, _ = filepath.Abs("./urls.log")
+	var logFile, _ = filepath.Abs("./logs/urls.log")
 
 	// 日志初始化
 	logger.Config(logFile, 4)
