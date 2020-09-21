@@ -4,20 +4,20 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	logger "gin_demo/jwt/dlog"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"math/rand"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 
 	//"math"
 	//"math/rand"
 	"net/http"
-	"net/url"
-	"time"
-
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var (
@@ -47,6 +47,12 @@ func init() {
 	// Register the summary and the histogram with Prometheus's default registry.
 	prometheus.MustRegister(rpcDurations)
 	prometheus.MustRegister(prometheus.NewBuildInfoCollector())
+	logFile, err := os.OpenFile(`./urls.log`, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		panic(err)
+	}
+	// 设置存储位置
+	log.SetOutput(logFile)
 }
 
 func testurl() (filepaths string) {
@@ -55,59 +61,70 @@ func testurl() (filepaths string) {
 	return filepaths
 }
 
-func readfile() {
+func readfile() ([]string, error) {
 	var urls []string
 	r, err := os.Open(testurl())
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
-		return
+		return urls,err
 	}
 	defer r.Close()
 	var s = bufio.NewScanner(r)
 	for s.Scan() { // 循环直到文件结束
 		line := s.Text() // 这个 line 就是每一行的文本了，string 类型
-		fmt.Println(line)
+		//fmt.Println(line)
 		urls = append(urls, line)
 	}
-	fmt.Println(urls)
-	for k, v := range urls {
-		fmt.Printf("url[%d]:%s\r\n", k, v)
+	return urls,err
+	//fmt.Println(urls)
+	//for k, v := range urls {
+	//	fmt.Printf("url[%d]:%s\r\n", k, v)
+	//}
+}
+
+func listenURL(url1 string) {
+	for {
+		u, _ := url.Parse(url1)
+		//q := u.Query()
+		//u.RawQuery = q.Encode()
+		res, err := http.Get(u.String())
+		if err != nil {
+			fmt.Println("0")
+			time.Sleep(60 * time.Second)
+			continue
+		}
+		resCode := res.StatusCode
+		err = res.Body.Close()
+		if err != nil {
+			fmt.Println("0")
+			return
+		}
+		if resCode == 200 {
+			//fmt.Printf("%s success , http_status is %d \r\n", u.String(), resCode)
+			log.Printf("%s success , http_status is %d \r\n", u.String(), resCode)
+
+		} else {
+			log.Printf("%s failed , http_status is %d \r\n", u.String(), resCode)
+		}
+		v := rand.ExpFloat64()
+		link := u.String()
+		responseCode := strconv.Itoa(resCode)
+		rpcDurations.WithLabelValues(link, responseCode).Observe(v)
+		time.Sleep(10 * time.Second)
 	}
 }
 
 func main() {
 	flag.Parse()
 
-	go func() {
-		for {
-			u, _ := url.Parse("http://192.168.6.51:8022/tag-health")
-			//q := u.Query()
-			//u.RawQuery = q.Encode()
-			res, err := http.Get(u.String())
-			if err != nil {
-				fmt.Println("0")
-				time.Sleep(60 * time.Second)
-				continue
-			}
-			resCode := res.StatusCode
-			err = res.Body.Close()
-			if err != nil {
-				fmt.Println("0")
-				return
-			}
-			if resCode == 200 {
-				fmt.Printf("%s success , http_status is %d \r\n", u.String(), resCode)
-				fmt.Printf("%s is success", u.String())
-			} else {
-				fmt.Printf("%s failed , http_status is %d \r\n", u.String(), resCode)
-			}
-			v := rand.ExpFloat64()
-			link := u.String()
-			responseCode := strconv.Itoa(resCode)
-			rpcDurations.WithLabelValues(link, responseCode).Observe(v)
-			time.Sleep(10 * time.Second)
-		}
-	}()
+	urls,err := readfile()
+	if err != nil {
+		log.Print("read urls err :",err)
+	}
+	for _, v := range urls {
+		go listenURL(v)
+	}
+
 
 	// Expose the registered metrics via HTTP.
 	http.Handle("/metrics", promhttp.HandlerFor(
