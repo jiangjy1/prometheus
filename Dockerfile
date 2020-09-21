@@ -1,5 +1,5 @@
 # 镜像来源
-FROM golang:1.15.2-alpine
+FROM alpine:latest
 
 
 # 拷贝当前目录的应用到镜像

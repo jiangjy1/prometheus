@@ -51,7 +51,7 @@ ROOT_DIR=`pwd`
 
 source ~/.bash_profile
 
-cd ${ROOT_DIR}/ && CGO_ENABLED=0 GOOS="$OS" go build -ldflags "$LDFlags" -o ${ROOT_DIR}/http_exporter && ./http_exporter
+cd ${ROOT_DIR}/ && CGO_ENABLED=0 GOOS="$OS" go build -ldflags "$LDFlags" -o ${ROOT_DIR}/http_exporter
 
 #echo 'build done.'
 echo '*** Build Done.'
