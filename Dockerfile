@@ -7,11 +7,12 @@ COPY main.go /application/
 COPY urls /application/
 COPY go.mod /application/
 COPY go.sum /application/
+COPY http_exporter /application/
 
 # 声明工作目录,不然找不到依赖包，如果有的话
 WORKDIR /application
 
-RUN go build -o http_exporter
+#RUN go build -o http_exporter
 # 声明动态容器卷
 #VOLUME /application/logs
 
