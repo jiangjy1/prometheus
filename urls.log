@@ -1,9 +1,0 @@
-[92m[INFO] [0m2020/09/21 14:01:52 E:/Go/src/gin_demo/jwt/http_exporter/main.go:61: loginit success ! 
-[92m[INFO] [0m2020/09/21 14:01:52 E:/Go/src/gin_demo/jwt/http_exporter/main.go:110: http://www.baidu.com success , http_status is 200 
-[92m[INFO] [0m2020/09/21 14:01:53 E:/Go/src/gin_demo/jwt/http_exporter/main.go:110: http://www.bai.com success , http_status is 200 
-[92m[INFO] [0m2020/09/21 14:02:03 E:/Go/src/gin_demo/jwt/http_exporter/main.go:110: http://www.baidu.com success , http_status is 200 
-[92m[INFO] [0m2020/09/21 14:02:03 E:/Go/src/gin_demo/jwt/http_exporter/main.go:110: http://www.bai.com success , http_status is 200 
-[92m[INFO] [0m2020/09/21 14:02:13 E:/Go/src/gin_demo/jwt/http_exporter/main.go:110: http://www.baidu.com success , http_status is 200 
-[92m[INFO] [0m2020/09/21 14:02:13 E:/Go/src/gin_demo/jwt/http_exporter/main.go:110: http://www.bai.com success , http_status is 200 
-[92m[INFO] [0m2020/09/21 14:02:23 E:/Go/src/gin_demo/jwt/http_exporter/main.go:110: http://www.baidu.com success , http_status is 200 
-[92m[INFO] [0m2020/09/21 14:02:23 E:/Go/src/gin_demo/jwt/http_exporter/main.go:110: http://www.bai.com success , http_status is 200 
