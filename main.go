@@ -4,20 +4,17 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	logger "gin_demo/jwt/dlog"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"gitlab.bb.local/jiangjunyu/dlog"
 	"log"
 	"math/rand"
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
 	"strconv"
 	"time"
-
-	//"math"
-	//"math/rand"
-	"net/http"
 )
 
 var (
@@ -43,16 +40,25 @@ var (
 	)
 )
 
+//noinspection ALL
 func init() {
 	// Register the summary and the histogram with Prometheus's default registry.
 	prometheus.MustRegister(rpcDurations)
 	prometheus.MustRegister(prometheus.NewBuildInfoCollector())
-	logFile, err := os.OpenFile(`./urls.log`, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		panic(err)
-	}
+	//logFile, err := os.OpenFile(`./urls.log`, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+	//if err != nil {
+	//	panic(err)
+	//}
 	// 设置存储位置
-	log.SetOutput(logFile)
+	//log.SetOutput(logFile)
+	var logSaveDays = 3
+	var logFile, _ = filepath.Abs("./urls.log")
+
+	// 日志初始化
+	logger.Config(logFile, 4)
+	logger.SetSaveMode(1)
+	logger.SetSaveDays(logSaveDays)
+	logger.Infof("loginit success ! \n")
 }
 
 func testurl() (filepaths string) {
@@ -66,7 +72,7 @@ func readfile() ([]string, error) {
 	r, err := os.Open(testurl())
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)
-		return urls,err
+		return urls, err
 	}
 	defer r.Close()
 	var s = bufio.NewScanner(r)
@@ -75,7 +81,7 @@ func readfile() ([]string, error) {
 		//fmt.Println(line)
 		urls = append(urls, line)
 	}
-	return urls,err
+	return urls, err
 	//fmt.Println(urls)
 	//for k, v := range urls {
 	//	fmt.Printf("url[%d]:%s\r\n", k, v)
@@ -117,14 +123,13 @@ func listenURL(url1 string) {
 func main() {
 	flag.Parse()
 
-	urls,err := readfile()
+	urls, err := readfile()
 	if err != nil {
-		log.Print("read urls err :",err)
+		log.Print("read urls err :", err)
 	}
 	for _, v := range urls {
 		go listenURL(v)
 	}
-
 
 	// Expose the registered metrics via HTTP.
 	http.Handle("/metrics", promhttp.HandlerFor(
