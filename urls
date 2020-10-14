@@ -1,2 +1,4 @@
-http://www.baidu.com
-http://www.bai.com
+http://172.18.254.178:8075/health
+http://172.18.254.178:8075/statistics
+http://172.18.254.177:8075/health
+http://172.18.254.177:8075/statistics
